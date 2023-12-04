@@ -7,18 +7,15 @@ from src.data import API_URL
 from src.data import SECRET_TOKEN
 from src.utils import send_to_telegram
 
-
-updates = dict()
-timeout = 60
-offset = -2
-message_queue = queue.Queue()
-
-
 def safename(name):
 	result = name.replace('\'', '\\\'').replace('\"', '\\\"').replace('\\', '\\\\')
 	return result
 
 def main():
+	updates = dict()
+	timeout = 60
+	offset = -2
+	message_queue = queue.Queue()
     while True:
         time.sleep(1)
         start_time = time.time()
