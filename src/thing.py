@@ -1,91 +1,37 @@
-from datetime import datetime
-import http.client
-import json
 
-from src.data import DATA
-from src.data import HEADER
-from src.data import schedule
-from src.data import URL
+import queue
+import time
 
-updates = dict()
-def send_to_telegram(id, command):
-    ans = str()
+import requests
 
-    if command == "/getmonday":
-        ans = "Monday"
+from src.data import API_URL
+from src.data import SECRET_TOKEN
+from src.utils import send_to_telegram
+from src.utils import updates
 
-    elif command == "/gettuesday":
-        ans = "Thuesday"
+def safename(name):
+	result = name.replace('\'', '\\\'').replace('\"', '\\\"').replace('\\', '\\\\')
+	return result
 
-    elif command == "/getwednesday":
-        ans = "Wednesday"
+def main():
+    updates = dict()
+    timeout = 60
+    offset = -2
+    message_queue = queue.Queue()
+    while True:
+        time.sleep(1)
+        start_time = time.time()
+        updates = requests.get(f'{API_URL}{SECRET_TOKEN}/getUpdates?offset={offset + 1}&timeout={timeout}').json()
 
-    elif command == "/getthursday":
-        ans = "Thursday"
+        if updates['result']:
 
-    elif command == "/getfriday":
-        ans = "Friday"
+            command = str(updates['result'][0]['message']['text'])
+            id = str(updates['result'][0]['message']['from']['id'])
+            send_to_telegram(id, command)
 
-    elif command == "/start":
-        ans = "Start"
+            for result in updates['result']:
+                offset = result['update_id']
 
-    elif command == "/help":
-        ans = "Help"
-    elif command[7:9] == "mo":
-        ans = "cMonday"
-    elif command[7:9] == "tu":
-        ans = "cThuesday"
-    elif command[7:9] == "we":
-        ans = "cWednesday"
-    elif command[7:9] == "th":
-        ans = "cThursday"
-    elif command[7:9] == "fr":
-        ans = "cFriday"
-    else:
-        final = str()
-        current = datetime.today().weekday()
 
-        match current:
-            case 0:
-                final = "Monday"
-
-            case 1:
-                final = "Thuesday"
-
-            case 2:
-                final = "Wednesday"
-
-            case 3:
-                final =  "Thursday"
-
-            case 4:
-                final = "Friday"
-
-            case 5:
-                final = "FreeDay"
-
-            case 6:
-                final = "FreeDay"
-
-        ans = final
-
-    if ans[0] != 'c':
-        t = DATA.replace('message', schedule[ans])
-        t = t.replace('ID', id)
-
-    else:
-        arr = command.splitlines()
-        final_string = str()
-        final_string = '\n'.join(arr[1:])
-        schedule[ans[1:]] = final_string
-        final = "ready\n"
-        t = DATA.replace('message', schedule[ans[1:]])
-        t = t.replace('ID', id)
-            
-
-    t_header = dict(HEADER)
-    httpscon = http.client.HTTPSConnection('api.telegram.org')
-    t_header['Connection'] = 'close'
-    httpscon.request('POST', URL, t.encode('utf-8'), t_header)
-    httpscon.getresponse().read().decode()
-    httpscon.close()
+        end_time = time.time()
+        print(f'Время между запросами к Telegram Bot API: {end_time - start_time}')
