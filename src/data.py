@@ -1,4 +1,6 @@
-SECRET_TOKEN = '6671538505:AAHOw_DrZGYUr-7HmdjgWkxO1oL-uyXbA04'
+import os
+
+SECRET_TOKEN = os.getenv("BOT_TOKEN")
 schedule = dict()
 API_URL = 'https://api.telegram.org/bot'
 UTC_OFFSET = 5
