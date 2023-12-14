@@ -3,10 +3,8 @@ import time
 
 import requests
 
-from src.data import API_URL
-from src.data import SECRET_TOKEN
-from src.utils import send_to_telegram
-from src.utils import updates
+from src.data import API_URL, SECRET_TOKEN
+from src.utils import send_to_telegram, updates
 
 def safename(name):
 	result = name.replace('\'', '\\\'').replace('\"', '\\\"').replace('\\', '\\\\')
