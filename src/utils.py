@@ -2,10 +2,7 @@ from datetime import datetime
 import http.client
 import json
 
-from src.data import DATA
-from src.data import HEADER
-from src.data import schedule
-from src.data import URL
+from src.data import DATA, HEADER, schedule, URL
 
 updates = dict()
 def send_to_telegram(id, command):
