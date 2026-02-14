@@ -1,4 +1,4 @@
-telegram bot on python. <\br>
+telegram bot on python.
 Имя бота: @TheDoTheThingBot
 https://t.me/TheDoTheThingBot.
 Проект представляет собой телеграм-бота, который по команде пользователя выдаёт расписание уроков группы 307
